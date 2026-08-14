@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+:root {
+  --canvas: #0f1117;
+  --surface: #171a21;
+  --border-hairline: rgba(255, 255, 255, 0.08);
+  --accent-gold: #c9a24b;
+  --positive: #4ade80;
+  --negative: #f87171;
+  --text-primary: #f5f3ee;
+  --text-muted: #9a9ca5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  @apply bg-canvas text-text-primary font-body;
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Shared keyboard focus indicator. focus-visible keeps the ring off for mouse
+ * clicks but always shows it for keyboard and other non-pointer input.
+ */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
