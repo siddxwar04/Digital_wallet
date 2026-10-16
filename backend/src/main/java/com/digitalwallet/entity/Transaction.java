@@ -7,7 +7,14 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
-@Table(name = "transactions")
+@Table(
+        name = "transactions",
+        indexes = {
+                @Index(name = "idx_transactions_timestamp", columnList = "timestamp"),
+                @Index(name = "idx_transactions_sender", columnList = "sender_id"),
+                @Index(name = "idx_transactions_receiver", columnList = "receiver_id")
+        }
+)
 public class Transaction {
 
     @Id

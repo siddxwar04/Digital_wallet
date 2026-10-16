@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -26,6 +27,7 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
+    @Transactional(readOnly = true)
     public PagedResponse<TransactionResponse> getTransactions(
             User user,
             TransactionCategory category,
@@ -60,6 +62,7 @@ public class TransactionService {
         );
     }
 
+    @Transactional(readOnly = true)
     public TransactionResponse getTransactionById(User user, Long id) {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));

@@ -9,17 +9,21 @@ export function useWallet() {
   })
 }
 
-/** Refetch wallet + any transaction queries after a successful mutation. */
-export function useInvalidateAfterTransfer() {
+/** Refetch wallet, transactions, and insights after a money-related mutation. */
+export function useInvalidateMoneyQueries() {
   const queryClient = useQueryClient()
 
   return async () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: queryKeys.wallet }),
       queryClient.invalidateQueries({ queryKey: ['transactions'] }),
+      queryClient.invalidateQueries({ queryKey: ['insights'] }),
     ])
   }
 }
+
+/** @deprecated Prefer useInvalidateMoneyQueries — kept for existing imports. */
+export const useInvalidateAfterTransfer = useInvalidateMoneyQueries
 
 export function useInvalidateWallet() {
   const queryClient = useQueryClient()
@@ -28,4 +32,12 @@ export function useInvalidateWallet() {
     queryClient.invalidateQueries({
       queryKey: queryKeys.wallet,
     })
+}
+
+export function useClearServerState() {
+  const queryClient = useQueryClient()
+
+  return () => {
+    queryClient.clear()
+  }
 }

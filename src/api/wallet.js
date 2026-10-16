@@ -18,3 +18,11 @@ export async function transfer({ receiverEmail, amount, category }) {
   })
   return data
 }
+
+export async function requestMoney({ payerEmail, amount }) {
+  const { data } = await api.post('/api/wallet/request', {
+    payerEmail,
+    amount,
+  })
+  return data
+}

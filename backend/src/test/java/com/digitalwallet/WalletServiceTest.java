@@ -1,7 +1,10 @@
 package com.digitalwallet;
 
+import com.digitalwallet.dto.AddMoneyRequest;
+import com.digitalwallet.dto.RequestMoneyRequest;
 import com.digitalwallet.dto.TransferRequest;
 import com.digitalwallet.dto.TransactionResponse;
+import com.digitalwallet.dto.WalletResponse;
 import com.digitalwallet.entity.TransactionCategory;
 import com.digitalwallet.entity.TransactionStatus;
 import com.digitalwallet.entity.User;
@@ -93,5 +96,67 @@ class WalletServiceTest {
         assertThat(walletRepository.findByUser(bob).orElseThrow().getBalance())
                 .isEqualByComparingTo("0");
         assertThat(transactionRepository.count()).isZero();
+    }
+
+    @Test
+    void requestMoneyCreatesPendingRecordWithoutMovingBalances() {
+        RequestMoneyRequest request = new RequestMoneyRequest();
+        request.setPayerEmail("bob@test.com");
+        request.setAmount(new BigDecimal("250"));
+
+        TransactionResponse response = walletService.requestMoney(alice, request);
+
+        assertThat(response.getCategory()).isEqualTo(TransactionCategory.REQUEST);
+        assertThat(response.getStatus()).isEqualTo(TransactionStatus.PENDING);
+        assertThat(response.getSenderEmail()).isEqualTo("bob@test.com");
+        assertThat(response.getReceiverEmail()).isEqualTo("alice@test.com");
+        assertThat(response.getAmount()).isEqualByComparingTo("250");
+
+        assertThat(walletRepository.findByUser(alice).orElseThrow().getBalance())
+                .isEqualByComparingTo("1000");
+        assertThat(walletRepository.findByUser(bob).orElseThrow().getBalance())
+                .isEqualByComparingTo("0");
+    }
+
+    @Test
+    void requestMoneyRejectsSelfRequest() {
+        RequestMoneyRequest request = new RequestMoneyRequest();
+        request.setPayerEmail("alice@test.com");
+        request.setAmount(new BigDecimal("100"));
+
+        assertThatThrownBy(() -> walletService.requestMoney(alice, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Cannot request money from yourself");
+    }
+
+    @Test
+    void addMoneyCreditsBalanceAndRecordsTopUp() {
+        AddMoneyRequest request = new AddMoneyRequest();
+        request.setAmount(new BigDecimal("300"));
+
+        WalletResponse response = walletService.addMoney(bob, request);
+
+        assertThat(response.getBalance()).isEqualByComparingTo("300");
+        assertThat(walletRepository.findByUser(bob).orElseThrow().getBalance())
+                .isEqualByComparingTo("300");
+        assertThat(transactionRepository.count()).isEqualTo(1);
+        assertThat(transactionRepository.findAll().get(0).getCategory())
+                .isEqualTo(TransactionCategory.TOPUP);
+    }
+
+    @Test
+    void getWalletAfterTopUpLoadsRecentWithoutEntityGraphFailure() {
+        AddMoneyRequest request = new AddMoneyRequest();
+        request.setAmount(new BigDecimal("150"));
+        walletService.addMoney(bob, request);
+
+        WalletResponse wallet = walletService.getWallet(bob);
+
+        assertThat(wallet.getBalance()).isEqualByComparingTo("150");
+        assertThat(wallet.getRecentTransactions()).hasSize(1);
+        assertThat(wallet.getRecentTransactions().get(0).getCategory())
+                .isEqualTo(TransactionCategory.TOPUP);
+        assertThat(wallet.getRecentTransactions().get(0).getSenderEmail())
+                .isEqualTo("bob@test.com");
     }
 }

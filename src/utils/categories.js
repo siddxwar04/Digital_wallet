@@ -31,10 +31,10 @@ export function insightToTransactionCategory(insight) {
 }
 
 export const INSIGHT_TAG_COLORS = {
-  FOOD: 'text-accent-gold bg-accent-gold/10',
+  FOOD: 'text-accent-gold bg-accent-gold-muted',
   TRANSPORT: 'text-positive bg-positive/10',
   SHOPPING: 'text-negative bg-negative/10',
-  BILLS: 'text-text-muted bg-canvas',
-  TRANSFERS: 'text-accent-gold bg-accent-gold/10',
-  OTHER: 'text-text-muted bg-canvas',
+  BILLS: 'text-text-muted bg-ink',
+  TRANSFERS: 'text-accent-gold bg-accent-gold-muted',
+  OTHER: 'text-text-muted bg-ink',
 }

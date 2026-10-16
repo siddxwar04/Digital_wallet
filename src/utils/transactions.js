@@ -10,21 +10,21 @@ export const TRANSACTION_CATEGORIES = [
 
 export const CHART_COLORS = {
   FOOD: '#C9A24B',
-  TRANSPORT: '#4ADE80',
-  SHOPPING: '#F87171',
-  BILLS: '#9A9CA5',
-  TRANSFERS: '#D4B05A',
-  OTHER: '#6B7280',
+  TRANSPORT: '#5ECF8E',
+  SHOPPING: '#E87B7B',
+  BILLS: '#8E919C',
+  TRANSFERS: '#D8B45C',
+  OTHER: '#6A6D78',
 }
 
 export const CATEGORY_STYLES = {
-  TRANSFER: { label: 'Transfer', color: 'text-accent-gold', bg: 'bg-accent-gold/10' },
+  TRANSFER: { label: 'Transfer', color: 'text-accent-gold', bg: 'bg-accent-gold-muted' },
   TOPUP: { label: 'Top up', color: 'text-positive', bg: 'bg-positive/10' },
-  FOOD: { label: 'Food', color: 'text-accent-gold', bg: 'bg-accent-gold/10' },
+  FOOD: { label: 'Food', color: 'text-accent-gold', bg: 'bg-accent-gold-muted' },
   TRANSPORT: { label: 'Transport', color: 'text-positive', bg: 'bg-positive/10' },
   SHOPPING: { label: 'Shopping', color: 'text-negative', bg: 'bg-negative/10' },
-  BILLS: { label: 'Bills', color: 'text-text-muted', bg: 'bg-canvas' },
-  REQUEST: { label: 'Request', color: 'text-text-muted', bg: 'bg-canvas' },
+  BILLS: { label: 'Bills', color: 'text-text-muted', bg: 'bg-ink' },
+  REQUEST: { label: 'Request', color: 'text-text-muted', bg: 'bg-ink' },
 }
 
 export function formatDateGroup(dateStr) {
@@ -65,7 +65,14 @@ export function getTransactionLabel(tx, userEmail) {
   const counterparty = isDebit ? tx.receiverEmail : tx.senderEmail
 
   if (tx.category === 'TOPUP') return 'Added to wallet'
-  if (tx.category === 'REQUEST') return `Requested from ${counterparty}`
+
+  if (tx.category === 'REQUEST') {
+    // Receiver is the requester; sender is the person asked to pay
+    if (tx.receiverEmail === userEmail) {
+      return `Requested from ${tx.senderEmail}`
+    }
+    return `Request from ${tx.receiverEmail}`
+  }
 
   return isDebit ? `Sent to ${counterparty}` : `Received from ${counterparty}`
 }

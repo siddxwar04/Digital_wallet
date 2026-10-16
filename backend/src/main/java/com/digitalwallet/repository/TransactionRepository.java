@@ -5,6 +5,7 @@ import com.digitalwallet.entity.TransactionCategory;
 import com.digitalwallet.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,8 +15,15 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    List<Transaction> findTop20BySenderOrReceiverOrderByTimestampDesc(User sender, User receiver);
+    @EntityGraph(attributePaths = {"sender", "receiver"})
+    @Query("""
+            SELECT t FROM Transaction t
+            WHERE t.sender = :user OR t.receiver = :user
+            ORDER BY t.timestamp DESC
+            """)
+    List<Transaction> findRecentForUser(@Param("user") User user, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"sender", "receiver"})
     @Query("""
             SELECT t FROM Transaction t
             WHERE (t.sender = :user OR t.receiver = :user)

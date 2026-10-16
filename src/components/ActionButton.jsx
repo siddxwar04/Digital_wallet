@@ -10,12 +10,13 @@ export default function ActionButton({
   className = '',
 }) {
   const base =
-    'focus-ring inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-medium transition-transform active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50'
+    'focus-ring inline-flex items-center justify-center gap-2 rounded-control px-5 py-3.5 text-sm font-medium transition-[transform,background-color,border-color] active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50'
 
   const variants = {
     primary: 'bg-accent-gold font-semibold text-canvas hover:bg-accent-gold-hover',
     secondary:
-      'border border-border-hairline bg-surface text-text-primary hover:border-accent-gold/30',
+      'border border-border-strong bg-elevated text-text-primary hover:border-accent-gold/40',
+    ghost: 'text-text-muted hover:text-accent-gold',
   }
 
   const classes = `${base} ${variants[variant]} ${className}`

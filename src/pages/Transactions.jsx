@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { getErrorMessage } from '../api/errors'
+import AlertBanner from '../components/AlertBanner'
+import PageHeader from '../components/PageHeader'
 import CategoryChart from '../components/insights/CategoryChart'
 import TransactionFilters from '../components/transactions/TransactionFilters'
 import TransactionList from '../components/transactions/TransactionList'
@@ -80,20 +82,21 @@ export default function Transactions() {
   const showEmpty = !isLoading && transactions.length === 0
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
-      <header>
-        <h2 className="font-heading text-2xl font-bold text-text-primary">Transactions</h2>
-        <p className="mt-1 font-body text-sm text-text-muted">Activity and spending insights</p>
-      </header>
+    <div className="page-stack mx-auto max-w-wide">
+      <PageHeader
+        eyebrow="Ledger"
+        title="Activity"
+        description="Spending insights and your full transaction history."
+      />
 
       <section className="space-y-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h3 className="font-heading text-lg font-semibold text-text-primary">Insights</h3>
-            <p className="font-body text-sm text-text-muted">Spending by category</p>
+            <h2 className="font-heading text-lg font-semibold text-text-primary">Insights</h2>
+            <p className="mt-1 font-body text-sm text-text-muted">Outgoing spend by category</p>
           </div>
-          <div className="space-y-1.5">
-            <label htmlFor="summary-month" className="block font-body text-xs text-text-muted">
+          <div className="space-y-2">
+            <label htmlFor="summary-month" className="block font-body text-xs font-medium text-text-muted">
               Month
             </label>
             <input
@@ -101,25 +104,25 @@ export default function Transactions() {
               type="month"
               value={summaryMonth}
               onChange={(e) => setSummaryMonth(e.target.value)}
-              className="focus-ring rounded-xl border border-border-hairline bg-surface px-3 py-2 font-body text-sm text-text-primary focus:border-accent-gold/50"
+              className="focus-ring field-control w-auto"
             />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border-hairline bg-surface p-5">
+        <div className="rounded-panel border border-border-hairline bg-surface p-5 sm:p-6">
           {summaryError ? (
-            <p className="font-body text-sm text-negative" role="alert">
-              {getErrorMessage(summaryErr, 'Could not load insights')}
-            </p>
+            <AlertBanner>{getErrorMessage(summaryErr, 'Could not load insights')}</AlertBanner>
           ) : (
             <>
-              <div className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                <p className="font-body text-sm text-text-muted">Total spent</p>
-                <p className="font-heading text-xl font-bold tabular-nums text-text-primary">
-                  {summaryLoading ? '…' : formatCurrency(summary?.totalSpent ?? 0)}
-                </p>
+              <div className="mb-5 flex flex-wrap items-end gap-x-6 gap-y-2 border-b border-border-hairline pb-5">
+                <div>
+                  <p className="section-label mb-1">Total spent</p>
+                  <p className="font-heading text-2xl font-bold tabular-nums text-text-primary">
+                    {summaryLoading ? '…' : formatCurrency(summary?.totalSpent ?? 0)}
+                  </p>
+                </div>
                 {!summaryLoading && (
-                  <p className="font-body text-xs text-text-muted">
+                  <p className="pb-1 font-body text-sm text-text-muted">
                     {summary?.transactionCount ?? 0} outgoing transactions
                   </p>
                 )}
@@ -131,7 +134,7 @@ export default function Transactions() {
       </section>
 
       <section className="space-y-4">
-        <h3 className="font-heading text-lg font-semibold text-text-primary">Activity</h3>
+        <h2 className="font-heading text-lg font-semibold text-text-primary">History</h2>
 
         <TransactionFilters
           category={category}
@@ -144,14 +147,12 @@ export default function Transactions() {
         />
 
         {isError ? (
-          <div className="rounded-2xl border border-negative/30 bg-surface p-6">
-            <p className="font-body text-sm text-negative" role="alert">
-              {getErrorMessage(error, 'Could not load transactions')}
-            </p>
+          <div className="rounded-panel border border-negative/30 bg-surface p-6">
+            <AlertBanner>{getErrorMessage(error, 'Could not load transactions')}</AlertBanner>
             <button
               type="button"
               onClick={() => refetch()}
-              className="focus-ring mt-3 font-body text-sm text-accent-gold hover:underline"
+              className="focus-ring mt-4 font-body text-sm text-accent-gold hover:underline"
             >
               Try again
             </button>
@@ -165,7 +166,7 @@ export default function Transactions() {
             <TransactionList transactions={transactions} userEmail={user?.email} />
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-between rounded-xl border border-border-hairline bg-surface px-4 py-3">
+              <div className="flex items-center justify-between gap-4 border-t border-border-hairline pt-4">
                 <button
                   type="button"
                   onClick={() => setPage((p) => Math.max(0, p - 1))}

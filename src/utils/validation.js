@@ -26,3 +26,14 @@ export function validateName(value) {
   if (!value.trim()) return 'Enter your name'
   return ''
 }
+
+export function validatePositiveAmount(value) {
+  if (value === '' || value === null || value === undefined || Number.isNaN(value)) {
+    return 'Enter an amount'
+  }
+  const amount = Number(value)
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return 'Enter an amount greater than zero'
+  }
+  return ''
+}

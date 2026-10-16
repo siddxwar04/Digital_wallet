@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '../api/auth'
 import { getErrorMessage } from '../api/errors'
+import AlertBanner from '../components/AlertBanner'
 import AuthCard from '../components/AuthCard'
 import FormField from '../components/FormField'
 import SubmitButton from '../components/SubmitButton'
 import TextInput from '../components/TextInput'
 import { useAuth } from '../hooks/useAuth'
+import { toSessionUser } from '../utils/authSession'
 import { validateEmail, validateLoginPassword } from '../utils/validation'
 
 export default function Login() {
@@ -35,11 +37,7 @@ export default function Login() {
 
     try {
       const data = await login(email.trim(), password)
-      setAuth(data.token, {
-        id: data.userId,
-        name: data.name,
-        email: data.email,
-      })
+      setAuth(data.token, toSessionUser(data))
       navigate('/dashboard', { replace: true })
     } catch (err) {
       setError(getErrorMessage(err, 'Invalid email or password'))
@@ -49,16 +47,9 @@ export default function Login() {
   }
 
   return (
-    <AuthCard title="Sign in" subtitle="Welcome back to your wallet">
-      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-        {error && (
-          <p
-            className="rounded-xl border border-negative/30 bg-negative/10 px-4 py-3 font-body text-sm text-negative"
-            role="alert"
-          >
-            {error}
-          </p>
-        )}
+    <AuthCard title="Sign in" subtitle="Welcome back — access your balance and transfers.">
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+        {error && <AlertBanner>{error}</AlertBanner>}
 
         <FormField label="Email" id="email" error={fieldErrors.email}>
           <TextInput
@@ -89,9 +80,9 @@ export default function Login() {
         <SubmitButton loading={loading}>Sign in</SubmitButton>
       </form>
 
-      <p className="mt-4 text-center font-body text-sm text-text-muted">
+      <p className="mt-6 text-center font-body text-sm text-text-muted">
         No account?{' '}
-        <Link to="/register" className="focus-ring text-accent-gold hover:underline">
+        <Link to="/register" className="focus-ring font-medium text-accent-gold hover:underline">
           Create one
         </Link>
       </p>

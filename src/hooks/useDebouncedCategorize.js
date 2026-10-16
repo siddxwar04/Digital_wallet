@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { categorize } from '../api/insights'
 
+const MIN_CHARS = 2
+const MAX_CHARS = 200
+
 export function useDebouncedCategorize(description, debounceMs = 500) {
   const [predictedCategory, setPredictedCategory] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
@@ -9,7 +12,6 @@ export function useDebouncedCategorize(description, debounceMs = 500) {
   const isOverriddenRef = useRef(false)
   const requestIdRef = useRef(0)
 
-  // New description → allow auto-suggest again
   useEffect(() => {
     isOverriddenRef.current = false
   }, [description])
@@ -17,7 +19,7 @@ export function useDebouncedCategorize(description, debounceMs = 500) {
   useEffect(() => {
     const trimmed = description.trim()
 
-    if (!trimmed) {
+    if (!trimmed || trimmed.length < MIN_CHARS) {
       setPredictedCategory(null)
       setSelectedCategory(null)
       setSource(null)
@@ -25,12 +27,13 @@ export function useDebouncedCategorize(description, debounceMs = 500) {
       return
     }
 
+    const payload = trimmed.slice(0, MAX_CHARS)
     setIsLoading(true)
     const requestId = ++requestIdRef.current
 
     const timer = setTimeout(async () => {
       try {
-        const result = await categorize(trimmed)
+        const result = await categorize(payload)
         if (requestId !== requestIdRef.current) return
 
         setPredictedCategory(result.category)

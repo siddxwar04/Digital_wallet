@@ -6,6 +6,7 @@ import com.digitalwallet.dto.RegisterRequest;
 import com.digitalwallet.entity.User;
 import com.digitalwallet.repository.UserRepository;
 import com.digitalwallet.security.JwtUtil;
+import com.digitalwallet.util.Emails;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,31 +38,38 @@ public class UserService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        String email = Emails.normalize(request.getEmail());
+
+        if (userRepository.existsByEmailIgnoreCase(email)) {
             throw new IllegalArgumentException("Email is already registered");
         }
 
         User user = User.create(
-                request.getName(),
-                request.getEmail(),
+                request.getName().trim(),
+                email,
                 passwordEncoder.encode(request.getPassword())
         );
 
         user = userRepository.save(user);
         walletService.createWalletForUser(user);
 
-        String token = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(token, user.getId(), user.getName(), user.getEmail());
+        return toAuthResponse(user);
     }
 
     public AuthResponse login(LoginRequest request) {
+        String email = Emails.normalize(request.getEmail());
+
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(email, request.getPassword())
         );
 
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
+        return toAuthResponse(user);
+    }
+
+    private AuthResponse toAuthResponse(User user) {
         String token = jwtUtil.generateToken(user.getEmail());
         return new AuthResponse(token, user.getId(), user.getName(), user.getEmail());
     }

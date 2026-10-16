@@ -2,14 +2,22 @@
 @config "../tailwind.config.js";
 
 :root {
-  --canvas: #0f1117;
-  --surface: #171a21;
-  --border-hairline: rgba(255, 255, 255, 0.08);
+  --canvas: #0c0e12;
+  --ink: #12151c;
+  --surface: #161a22;
+  --elevated: #1c212b;
+  --border-hairline: rgba(245, 240, 230, 0.09);
+  --border-strong: rgba(245, 240, 230, 0.16);
   --accent-gold: #c9a24b;
-  --positive: #4ade80;
-  --negative: #f87171;
-  --text-primary: #f5f3ee;
-  --text-muted: #9a9ca5;
+  --accent-gold-hover: #d8b45c;
+  --positive: #5ecf8e;
+  --negative: #e87b7b;
+  --text-primary: #f3efe6;
+  --text-muted: #8e919c;
+  --space-section: 2rem;
+  --space-page: 1.5rem;
+  --radius-control: 0.625rem;
+  --radius-panel: 1rem;
 }
 
 * {
@@ -24,7 +32,14 @@ html {
 body {
   margin: 0;
   min-height: 100dvh;
-  @apply bg-canvas text-text-primary font-body;
+  color: var(--text-primary);
+  font-family: Inter, system-ui, sans-serif;
+  background-color: var(--canvas);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(201, 162, 75, 0.08), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(94, 207, 142, 0.04), transparent 50%),
+    linear-gradient(180deg, #0e1117 0%, var(--canvas) 40%, #0a0c10 100%);
+  background-attachment: fixed;
 }
 
 #root {
@@ -35,14 +50,95 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/*
- * Shared keyboard focus indicator. focus-visible keeps the ring off for mouse
- * clicks but always shows it for keyboard and other non-pointer input.
- */
+/* Soft ledger grid — atmosphere without heavy decoration */
+.app-shell {
+  position: relative;
+}
+
+.app-shell::before {
+  content: '';
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  opacity: 0.035;
+  background-image:
+    linear-gradient(rgba(243, 239, 230, 0.9) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(243, 239, 230, 0.9) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent);
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.brand-mark__glyph {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(201, 162, 75, 0.45);
+  background: linear-gradient(145deg, rgba(201, 162, 75, 0.18), rgba(201, 162, 75, 0.04));
+  color: var(--accent-gold);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section);
+}
+
+.section-label {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.divider-list {
+  border-top: 1px solid var(--border-hairline);
+}
+
+.divider-list > * + * {
+  border-top: 1px solid var(--border-hairline);
+}
+
 .focus-ring:focus-visible {
   outline: 2px solid var(--accent-gold);
   outline-offset: 2px;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-control);
+}
+
+.field-control {
+  width: 100%;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border-hairline);
+  background: var(--ink);
+  padding: 0.8125rem 1rem;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.field-control::placeholder {
+  color: var(--text-muted);
+}
+
+.field-control:focus {
+  border-color: rgba(201, 162, 75, 0.45);
+}
+
+.field-control:disabled {
+  opacity: 0.6;
 }
 
 @media (prefers-reduced-motion: reduce) {

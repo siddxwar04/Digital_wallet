@@ -86,7 +86,10 @@ public class LlmCategorizer {
             }
             return InsightCategory.fromLabel(content);
         } catch (Exception ex) {
-            log.warn("LLM categorization failed for description '{}': {}", description, ex.getMessage());
+            // Avoid logging full user descriptions (may contain personal details)
+            log.warn("LLM categorization failed (len={}): {}",
+                    description != null ? description.length() : 0,
+                    ex.getMessage());
             return null;
         }
     }

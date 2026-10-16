@@ -76,6 +76,7 @@ public class InsightService {
         return new CategorizeResponse(description, llmCategory, SOURCE_LLM);
     }
 
+    @Transactional(readOnly = true)
     public MonthlySummaryResponse getMonthlySummary(User user, String month) {
         YearMonth yearMonth = parseMonth(month);
         Instant from = yearMonth.atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant();

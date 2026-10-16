@@ -3,9 +3,11 @@ package com.digitalwallet.exception;
 import com.digitalwallet.dto.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -47,6 +49,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InsufficientBalanceException.class)
     public ResponseEntity<ErrorResponse> handleInsufficientBalance(InsufficientBalanceException ex) {
         return badRequest(ex.getMessage());
+    }
+
+    @ExceptionHandler({
+            ObjectOptimisticLockingFailureException.class,
+            DataIntegrityViolationException.class
+    })
+    public ResponseEntity<ErrorResponse> handleConflict(Exception ex) {
+        log.warn("Concurrent update or integrity conflict: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(409, "Please retry — another update changed this data"));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

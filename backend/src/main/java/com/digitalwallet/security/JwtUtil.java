@@ -14,6 +14,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+    private static final int MIN_SECRET_LENGTH = 32;
+
     private final SecretKey key;
     private final long expirationMs;
 
@@ -21,6 +23,11 @@ public class JwtUtil {
             @Value("${app.jwt.secret}") String secret,
             @Value("${app.jwt.expiration-ms}") long expirationMs
     ) {
+        if (secret == null || secret.trim().length() < MIN_SECRET_LENGTH) {
+            throw new IllegalStateException(
+                    "app.jwt.secret must be at least " + MIN_SECRET_LENGTH + " characters"
+            );
+        }
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expirationMs = expirationMs;
     }
