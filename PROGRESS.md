@@ -17,9 +17,7 @@ Short log of what was done and what’s next. Keep bullets scannable; don’t in
 
 ## In progress / current
 
-Interview polish is **COMPLETE** (2026-10-16). No active polish work.
-
-Next (optional / outside polish): product features, BE test expansion, deploy, or demo script polish as needed.
+Nothing in progress. Final audit completed 2026-10-16 (see Done).
 
 ---
 
@@ -54,3 +52,10 @@ Do not fabricate features. Do not commit/push unless the user asks.
 
 ### 2026-10-16
 - Added this `PROGRESS.md` at repo root as the working memory log
+
+### 2026-10-16 � Final audit
+
+- Re-ran checks: FE tests 25/25, oxlint clean, vite build OK; BE tests 23/23 BUILD SUCCESS
+- Live E2E not verified (API :8080 / Postgres :5432 down; Vite :5173 up)
+- README: added Known limitations + PROGRESS.md in layout
+- UI critique: dark gold + Inter still reads template-like; request fulfill gap remains

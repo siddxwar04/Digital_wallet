@@ -93,6 +93,7 @@ App: `http://localhost:5173`
 ├── src/                 # React app
 ├── backend/             # Spring Boot API + docker-compose
 ├── .env.example         # Frontend / backend env hints
+├── PROGRESS.md          # Working log of completed work
 └── README.md
 ```
 
@@ -103,3 +104,14 @@ App: `http://localhost:5173`
 - JWT is stored in `localStorage` for this demo (simple for local runs; not production hardening).
 - LLM categorization is optional; the app works without an OpenAI key.
 - Do not commit `.env` or real secrets.
+
+---
+
+## Known limitations (demo scope)
+
+- **Request money** creates a `PENDING` ledger row only — no accept/pay/decline flow yet.
+- **Add money** credits the wallet directly (no real payment provider).
+- JWT default secret is for local runs; override `JWT_SECRET` before any shared deploy.
+- Rate limiting is in-memory (not shared across multiple API instances).
+- No refresh tokens, email verification, or KYC.
+- Frontend production bundle is a single large JS chunk (~700KB+) — fine for demo, not optimized for CDN delivery.
