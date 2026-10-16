@@ -14,12 +14,15 @@ export default function BrandMark({ size = 'md', showWordmark = true }) {
         : 'text-lg'
 
   return (
-    <span className="brand-mark">
+    <span className="brand-mark" aria-label="Wallet">
       <span className={`brand-mark__glyph ${glyph}`} aria-hidden="true">
         W
       </span>
       {showWordmark && (
-        <span className={`font-heading font-bold tracking-tight text-text-primary ${word}`}>
+        <span
+          className={`font-heading font-bold tracking-tight text-text-primary ${word}`}
+          aria-hidden="true"
+        >
           Wallet
         </span>
       )}

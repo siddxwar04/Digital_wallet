@@ -1,9 +1,6 @@
 import ActionButton from './ActionButton'
 import { IconCheck } from './icons'
 
-/**
- * Shared success confirmation used by Send / Add / Request flows.
- */
 export default function SuccessPanel({
   title,
   description,
@@ -11,9 +8,12 @@ export default function SuccessPanel({
   secondaryAction,
 }) {
   return (
-    <div className="mx-auto max-w-lg">
+    <div className="mx-auto max-w-lg" role="status" aria-live="polite">
       <div className="rounded-hero border border-positive/30 bg-surface px-6 py-10 text-center sm:px-8">
-        <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-positive/15 text-positive">
+        <div
+          className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-positive/15 text-positive"
+          aria-hidden="true"
+        >
           <IconCheck className="h-6 w-6" />
         </div>
         <p className="font-heading text-xl font-semibold text-text-primary sm:text-2xl">{title}</p>

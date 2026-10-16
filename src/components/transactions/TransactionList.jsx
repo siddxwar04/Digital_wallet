@@ -1,24 +1,39 @@
-import { Link } from 'react-router-dom'
+import EmptyState from '../EmptyState'
 import CategoryTag from './CategoryTag'
 import { IconSend } from '../icons'
 import { formatCurrency } from '../../utils/format'
 import { getTransactionLabel, groupTransactionsByDay } from '../../utils/transactions'
 
-export default function TransactionList({ transactions, userEmail, compact = false }) {
+export default function TransactionList({
+  transactions,
+  userEmail,
+  compact = false,
+  filtered = false,
+  onClearFilters,
+}) {
   if (!transactions.length) {
+    if (filtered) {
+      return (
+        <EmptyState
+          icon={IconSend}
+          title="No matching activity"
+          description="Nothing matches these filters. Clear them to see your full history."
+          action={
+            onClearFilters
+              ? { label: 'Clear filters', onClick: onClearFilters }
+              : undefined
+          }
+        />
+      )
+    }
+
     return (
-      <div className="rounded-panel border border-dashed border-border-strong bg-ink/40 px-6 py-12 text-center">
-        <div className="mx-auto mb-3 grid h-11 w-11 place-items-center rounded-full border border-border-hairline bg-elevated text-accent-gold">
-          <IconSend className="h-5 w-5" />
-        </div>
-        <p className="font-heading text-base font-semibold text-text-primary">No transactions yet</p>
-        <p className="mt-2 font-body text-sm text-text-muted">
-          <Link to="/send" className="focus-ring text-accent-gold hover:underline">
-            Send your first transfer
-          </Link>{' '}
-          to see activity here.
-        </p>
-      </div>
+      <EmptyState
+        icon={IconSend}
+        title="No transactions yet"
+        description="Top up your wallet or send money to see activity here."
+        action={{ to: '/add', label: 'Add money' }}
+      />
     )
   }
 
@@ -37,8 +52,10 @@ export default function TransactionList({ transactions, userEmail, compact = fal
   return (
     <div className="space-y-8">
       {groups.map((group) => (
-        <section key={group.dayKey}>
-          <h3 className="section-label mb-3">{group.label}</h3>
+        <section key={group.dayKey} aria-labelledby={`day-${group.dayKey}`}>
+          <h3 id={`day-${group.dayKey}`} className="section-label mb-3">
+            {group.label}
+          </h3>
           <ul className="divider-list rounded-panel border border-border-hairline bg-surface">
             {group.items.map((tx) => (
               <TransactionRow key={tx.id} tx={tx} userEmail={userEmail} />
@@ -86,7 +103,10 @@ function TransactionRow({ tx, userEmail }) {
           )}
         </div>
       </div>
-      <p className={`shrink-0 font-heading text-sm font-semibold tabular-nums ${amountClass}`}>
+      <p
+        className={`shrink-0 font-heading text-sm font-semibold tabular-nums ${amountClass}`}
+        aria-label={`${isPending ? 'Pending ' : ''}${signedAmount}${formatCurrency(tx.amount)}`}
+      >
         {signedAmount}
         {formatCurrency(tx.amount)}
       </p>

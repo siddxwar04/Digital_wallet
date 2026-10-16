@@ -42,7 +42,9 @@ export default function CategorySuggestField({
       {(description.trim() || displayCategory) && (
         <div className="mt-2.5 flex flex-wrap items-center gap-2">
           {isLoading ? (
-            <span className="font-body text-xs text-text-muted">Detecting category…</span>
+            <span className="font-body text-xs text-text-muted" role="status" aria-live="polite">
+              Detecting category…
+            </span>
           ) : displayCategory ? (
             <span
               data-testid="category-tag"

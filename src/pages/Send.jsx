@@ -191,7 +191,8 @@ export default function Send() {
         <ActionButton
           type="submit"
           className="w-full"
-          disabled={mutation.isPending || walletLoading}
+          loading={mutation.isPending}
+          disabled={walletLoading}
         >
           {mutation.isPending
             ? 'Sending…'

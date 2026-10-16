@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { getErrorMessage } from '../api/errors'
 import AlertBanner from '../components/AlertBanner'
+import ErrorPanel from '../components/ErrorPanel'
 import PageHeader from '../components/PageHeader'
 import CategoryChart from '../components/insights/CategoryChart'
 import TransactionFilters from '../components/transactions/TransactionFilters'
@@ -28,6 +29,7 @@ export default function Transactions() {
 
   const from = toIsoStartOfDay(fromDate)
   const to = toIsoEndOfDay(toDate)
+  const hasFilters = Boolean(category || fromDate || toDate)
 
   const {
     data: txData,
@@ -89,10 +91,12 @@ export default function Transactions() {
         description="Spending insights and your full transaction history."
       />
 
-      <section className="space-y-4">
+      <section className="space-y-4" aria-labelledby="insights-heading">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="font-heading text-lg font-semibold text-text-primary">Insights</h2>
+            <h2 id="insights-heading" className="font-heading text-lg font-semibold text-text-primary">
+              Insights
+            </h2>
             <p className="mt-1 font-body text-sm text-text-muted">Outgoing spend by category</p>
           </div>
           <div className="space-y-2">
@@ -104,7 +108,7 @@ export default function Transactions() {
               type="month"
               value={summaryMonth}
               onChange={(e) => setSummaryMonth(e.target.value)}
-              className="focus-ring field-control w-auto"
+              className="focus-ring field-control w-full sm:w-auto"
             />
           </div>
         </div>
@@ -117,9 +121,16 @@ export default function Transactions() {
               <div className="mb-5 flex flex-wrap items-end gap-x-6 gap-y-2 border-b border-border-hairline pb-5">
                 <div>
                   <p className="section-label mb-1">Total spent</p>
-                  <p className="font-heading text-2xl font-bold tabular-nums text-text-primary">
-                    {summaryLoading ? '…' : formatCurrency(summary?.totalSpent ?? 0)}
-                  </p>
+                  {summaryLoading ? (
+                    <div
+                      className="mt-1 h-8 w-28 animate-pulse rounded-control bg-elevated"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <p className="font-heading text-2xl font-bold tabular-nums text-text-primary">
+                      {formatCurrency(summary?.totalSpent ?? 0)}
+                    </p>
+                  )}
                 </div>
                 {!summaryLoading && (
                   <p className="pb-1 font-body text-sm text-text-muted">
@@ -133,8 +144,10 @@ export default function Transactions() {
         </div>
       </section>
 
-      <section className="space-y-4">
-        <h2 className="font-heading text-lg font-semibold text-text-primary">History</h2>
+      <section className="space-y-4" aria-labelledby="history-heading">
+        <h2 id="history-heading" className="font-heading text-lg font-semibold text-text-primary">
+          History
+        </h2>
 
         <TransactionFilters
           category={category}
@@ -147,26 +160,28 @@ export default function Transactions() {
         />
 
         {isError ? (
-          <div className="rounded-panel border border-negative/30 bg-surface p-6">
-            <AlertBanner>{getErrorMessage(error, 'Could not load transactions')}</AlertBanner>
-            <button
-              type="button"
-              onClick={() => refetch()}
-              className="focus-ring mt-4 font-body text-sm text-accent-gold hover:underline"
-            >
-              Try again
-            </button>
-          </div>
+          <ErrorPanel
+            message={getErrorMessage(error, 'Could not load transactions')}
+            onRetry={() => refetch()}
+          />
         ) : isLoading ? (
           <TransactionSkeleton />
         ) : showEmpty ? (
-          <TransactionList transactions={[]} userEmail={user?.email} />
+          <TransactionList
+            transactions={[]}
+            userEmail={user?.email}
+            filtered={hasFilters}
+            onClearFilters={hasFilters ? clearFilters : undefined}
+          />
         ) : (
           <>
             <TransactionList transactions={transactions} userEmail={user?.email} />
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-between gap-4 border-t border-border-hairline pt-4">
+              <nav
+                aria-label="Transaction pages"
+                className="flex items-center justify-between gap-4 border-t border-border-hairline pt-4"
+              >
                 <button
                   type="button"
                   onClick={() => setPage((p) => Math.max(0, p - 1))}
@@ -175,7 +190,7 @@ export default function Transactions() {
                 >
                   Previous
                 </button>
-                <p className="font-body text-sm text-text-muted">
+                <p className="font-body text-sm text-text-muted" aria-live="polite">
                   Page {page + 1} of {totalPages}
                   {isFetching && !isLoading ? ' · Updating…' : ''}
                 </p>
@@ -187,7 +202,7 @@ export default function Transactions() {
                 >
                   Next
                 </button>
-              </div>
+              </nav>
             )}
           </>
         )}

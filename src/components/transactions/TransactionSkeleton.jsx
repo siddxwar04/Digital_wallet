@@ -1,6 +1,10 @@
 export default function TransactionSkeleton() {
   return (
-    <div className="space-y-8 animate-pulse">
+    <div
+      className="space-y-8 animate-pulse"
+      role="status"
+      aria-label="Loading transactions"
+    >
       <div>
         <div className="mb-3 h-3 w-20 rounded bg-elevated" />
         <div className="divider-list rounded-panel border border-border-hairline bg-surface">
@@ -15,6 +19,7 @@ export default function TransactionSkeleton() {
           ))}
         </div>
       </div>
+      <span className="sr-only">Loading transactions</span>
     </div>
   )
 }

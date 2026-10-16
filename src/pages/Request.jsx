@@ -123,7 +123,7 @@ export default function Request() {
           />
         </FormField>
 
-        <ActionButton type="submit" className="w-full" disabled={mutation.isPending}>
+        <ActionButton type="submit" className="w-full" loading={mutation.isPending}>
           {mutation.isPending
             ? 'Sending request…'
             : Number.isFinite(parsedAmount) && parsedAmount > 0

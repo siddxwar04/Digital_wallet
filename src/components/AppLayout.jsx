@@ -57,9 +57,13 @@ export default function AppLayout() {
 
   return (
     <div className="app-shell flex min-h-dvh">
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
+
       <aside className="relative z-10 hidden w-60 shrink-0 flex-col border-r border-border-hairline bg-ink/80 px-5 py-6 backdrop-blur-sm lg:flex">
         <BrandMark />
-        <nav aria-label="Main" className="mt-10 flex flex-1 flex-col gap-1">
+        <nav aria-label="Primary" className="mt-10 flex flex-1 flex-col gap-1">
           {navItems.map((item) => (
             <NavItem key={item.to} {...item} />
           ))}
@@ -93,12 +97,16 @@ export default function AppLayout() {
           </button>
         </header>
 
-        <main className="flex-1 overflow-y-auto px-4 py-6 pb-24 sm:px-6 md:px-8 md:py-8 lg:pb-10">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 overflow-y-auto px-4 py-6 pb-24 outline-none sm:px-6 md:px-8 md:py-8 lg:pb-10"
+        >
           <Outlet />
         </main>
 
         <nav
-          aria-label="Main"
+          aria-label="Mobile"
           className="fixed inset-x-0 bottom-0 z-20 border-t border-border-hairline bg-ink/95 px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 backdrop-blur-md lg:hidden"
         >
           <div className="mx-auto flex max-w-lg items-stretch justify-between">

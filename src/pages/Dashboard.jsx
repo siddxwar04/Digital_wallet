@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
-import AlertBanner from '../components/AlertBanner'
 import BalanceCard from '../components/BalanceCard'
+import ErrorPanel from '../components/ErrorPanel'
 import PageHeader from '../components/PageHeader'
 import TransactionList from '../components/transactions/TransactionList'
+import TransactionSkeleton from '../components/transactions/TransactionSkeleton'
 import { IconAdd, IconRequest, IconSend } from '../components/icons'
 import { useAuth } from '../hooks/useAuth'
 import { useWallet } from '../hooks/useWallet'
@@ -46,16 +47,10 @@ export default function Dashboard() {
       />
 
       {isError ? (
-        <div className="rounded-panel border border-negative/30 bg-surface p-6">
-          <AlertBanner>{getErrorMessage(error, 'Could not load balance')}</AlertBanner>
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="focus-ring mt-4 font-body text-sm text-accent-gold hover:underline"
-          >
-            Try again
-          </button>
-        </div>
+        <ErrorPanel
+          message={getErrorMessage(error, 'Could not load balance')}
+          onRetry={() => refetch()}
+        />
       ) : (
         <BalanceCard
           balance={data?.balance ?? 0}
@@ -64,8 +59,10 @@ export default function Dashboard() {
         />
       )}
 
-      <section>
-        <p className="section-label mb-3">Quick actions</p>
+      <section aria-labelledby="quick-actions-heading">
+        <h2 id="quick-actions-heading" className="section-label mb-3">
+          Quick actions
+        </h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {quickActions.map(({ to, label, hint, icon: Icon, primary }) => (
             <Link
@@ -81,6 +78,7 @@ export default function Dashboard() {
                 className={`grid h-9 w-9 place-items-center rounded-control ${
                   primary ? 'bg-canvas/15 text-canvas' : 'bg-accent-gold-muted text-accent-gold'
                 }`}
+                aria-hidden="true"
               >
                 <Icon className="h-5 w-5" />
               </span>
@@ -99,9 +97,11 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="recent-activity-heading">
         <div className="flex items-baseline justify-between gap-3">
-          <p className="section-label">Recent activity</p>
+          <h2 id="recent-activity-heading" className="section-label">
+            Recent activity
+          </h2>
           <Link
             to="/transactions"
             className="focus-ring font-body text-xs font-medium text-accent-gold hover:underline"
@@ -109,7 +109,9 @@ export default function Dashboard() {
             View all
           </Link>
         </div>
-        {!isError && (
+        {isError ? null : isLoading ? (
+          <TransactionSkeleton />
+        ) : (
           <TransactionList
             transactions={recent}
             userEmail={user?.email ?? data?.email}
@@ -117,7 +119,9 @@ export default function Dashboard() {
           />
         )}
         {isFetching && !isLoading && (
-          <p className="font-body text-xs text-text-faint">Updating balance…</p>
+          <p className="font-body text-xs text-text-faint" aria-live="polite">
+            Updating balance…
+          </p>
         )}
       </section>
     </div>

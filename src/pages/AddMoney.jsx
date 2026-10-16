@@ -130,7 +130,8 @@ export default function AddMoney() {
         <ActionButton
           type="submit"
           className="w-full"
-          disabled={mutation.isPending || walletLoading}
+          loading={mutation.isPending}
+          disabled={walletLoading}
         >
           {mutation.isPending
             ? 'Adding…'

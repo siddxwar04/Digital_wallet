@@ -7,6 +7,7 @@ export default function ActionButton({
   type = 'button',
   variant = 'primary',
   disabled = false,
+  loading = false,
   className = '',
 }) {
   const base =
@@ -20,17 +21,24 @@ export default function ActionButton({
   }
 
   const classes = `${base} ${variants[variant]} ${className}`
+  const isDisabled = disabled || loading
 
   if (to) {
     return (
-      <Link to={to} className={classes}>
+      <Link to={to} className={classes} aria-disabled={isDisabled || undefined}>
         {children}
       </Link>
     )
   }
 
   return (
-    <button type={type} onClick={onClick} disabled={disabled} className={classes}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={isDisabled}
+      aria-busy={loading || undefined}
+      className={classes}
+    >
       {children}
     </button>
   )

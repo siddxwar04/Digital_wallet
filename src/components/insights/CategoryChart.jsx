@@ -42,19 +42,34 @@ export default function CategoryChart({ categories, loading }) {
   )
 
   if (loading) {
-    return <div className="h-60 animate-pulse rounded-panel bg-elevated/60" />
+    return (
+      <div
+        className="h-60 animate-pulse rounded-panel bg-elevated/60"
+        role="status"
+        aria-label="Loading spending chart"
+      />
+    )
   }
 
   if (!chartData.length) {
     return (
-      <div className="flex h-60 items-center justify-center rounded-panel border border-dashed border-border-strong bg-ink/40">
-        <p className="font-body text-sm text-text-muted">No spending data for this month</p>
+      <div
+        className="flex h-60 items-center justify-center rounded-panel border border-dashed border-border-strong bg-ink/40"
+        role="status"
+      >
+        <p className="px-4 text-center font-body text-sm text-text-muted">
+          No outgoing spend this month. Send money to see category insights.
+        </p>
       </div>
     )
   }
 
   return (
-    <div className="h-60 w-full sm:h-72">
+    <div
+      className="h-60 w-full sm:h-72"
+      role="img"
+      aria-label="Bar chart of outgoing spend by category"
+    >
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid stroke="rgba(245,240,230,0.06)" vertical={false} />

@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import AddMoney from './pages/AddMoney'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
+import NotFound from './pages/NotFound'
 import Register from './pages/Register'
 import Request from './pages/Request'
 import Send from './pages/Send'
@@ -44,7 +45,7 @@ export default function App() {
           <Route path="/request" element={<Request />} />
         </Route>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )
