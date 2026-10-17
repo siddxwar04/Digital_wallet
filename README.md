@@ -42,6 +42,15 @@ mvn spring-boot:run
 
 API: `http://localhost:8080`
 
+**No Docker / Postgres?** Run with the in-memory H2 profile instead:
+
+```bash
+cd backend
+mvn spring-boot:run "-Dspring-boot.run.profiles=local"
+```
+
+Data resets when the API stops. Prefer Postgres + Docker for a lasting demo.
+
 Optional env overrides (see `.env.example`):
 
 - `JWT_SECRET` — use a long random value outside local demos
